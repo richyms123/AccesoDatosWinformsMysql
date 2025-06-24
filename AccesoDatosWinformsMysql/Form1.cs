@@ -18,11 +18,11 @@ namespace AccesoDatosWinformsMysql
                 Description = "Messi el mejor"
             };
             var conn = new AccesoDatosMySql("localhost", "nwind",
-                "root", "700r", 3306);
+                "root", "", 3306);
 
             var resukt = conn.ejecutarSentencia(
                 "INSERT INTO categories (categoryname, description) " +
-                "VALUES ('@categoryname', '@description')", c
+                "VALUES (@categoryname, @description)", c
                 );
 
             MessageBox.Show($"Filas afectas {resukt}");
