@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ using MySql.Data.MySqlClient;
 
 namespace AccesoDatosWinForm.data
 {
-    class AccesoDatosMySql
+    class AccesoDatosMySql 
     {
         MySqlConnection _connection ;
         MySqlCommand _command;
@@ -37,9 +38,24 @@ namespace AccesoDatosWinForm.data
             return _command.ExecuteNonQuery();
         }
 
-        public MySqlDataReader ejecutarQuery(string consulta) { 
+        public DataTable ejecutarQuery(string consulta,string filtro) { 
             _command = new MySqlCommand(consulta, _connection);
-            return _command.ExecuteReader();
+            _parametros = new List<MySqlParameter>
+            {
+                new MySqlParameter("@filtro",filtro)
+            };
+            foreach(var parametro in _parametros)
+            {
+                _command.Parameters.Add(parametro);
+            }
+            MySqlDataReader lector = _command.ExecuteReader();
+            using (DataTable tabla = new DataTable())
+            {
+                tabla.Load(lector);
+                lector.Dispose();
+                return tabla;
+            }
+            
         }
 
         public AccesoDatosMySql(string host, string db, 
